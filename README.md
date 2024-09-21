@@ -1,50 +1,44 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# echo meet front-rnd
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## ⚙️ Como Instalar e Executar o Projeto
 
-- Configure the top-level `parserOptions` property like this:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+
+1.Clonar o Repositório Clone o repositório do projeto para sua máquina local:
+
+```bash
+  git clone https://github.com/gabriel-teotonio/echo-meet-frontend.git
+```
+    
+2.Acessar o Diretório do Projeto Entre no diretório do projeto:
+
+```bash
+cd nome-do-repositorio 
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+3.Instalar Dependências Instale todas as dependências necessárias:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+    npm install ou yarn install
 ```
+
+
+4.Rodar o Projeto Execute o servidor de desenvolvimento:
+
+```bash
+   npm run dev
+```
+
+
+5.Abra seu navegador e acesse a URL:
+
+```bash
+    http://localhost:5173
+```
+
+Depois disso você pode fazer as moficações e mandar as alterações para esse repositorio 
+Crie uma branch com o nome da feature ou seu nome mesmo ;)
