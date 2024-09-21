@@ -10,6 +10,7 @@ import {
     Collapse,
     ScrollArea,
     rem,
+    Text,
   } from '@mantine/core';
   import { useDisclosure } from '@mantine/hooks';
   import classes from './Header.module.css';
@@ -23,13 +24,13 @@ import {
       <Box pb={10}>
         <header className={classes.header}>
           <Group justify="space-between" h="100%">
-            <p>Logo</p>
+            <Text size='1.5rem' fw='bold'>Echo Meet</Text>
             <Group h="100%" gap={0} visibleFrom="sm">
               <a href="#" className={classes.link}>
                 Inicio
               </a>
               <a href="#" className={classes.link}>
-                Relatórios
+                Reunições
               </a>
               <a href="#" className={classes.link}>
                 Grupos

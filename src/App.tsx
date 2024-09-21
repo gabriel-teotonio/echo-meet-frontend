@@ -1,13 +1,21 @@
-import { Text, Title } from '@mantine/core'
+import { Route, Routes } from 'react-router-dom'
 import './App.css'
+import { PrivateLayout } from './Layouts/PrivateLayout'
+import { Home } from './pages/Home/Home'
+import { Login } from './pages/Login/Login'
+import { Register } from './pages/Register/Register'
 
 function App() {
  
   return (
     <>
-      <Title>Pagina inicial</Title> 
-      <Text c='gray.5'>Dá uma olhada na doc da Lib usada aqui: <a href="https://mantine.dev/core/app-shell/">Mantine UI</a></Text>
-      <Text c='gray.5'>Estudar sobre <b>react-router-dom</b> </Text>
+      <Routes>
+        <Route path='/' element={<PrivateLayout />}>
+          <Route index element={<Home />}/>
+        </Route>
+      <Route index path='/login' element={<Login />}/>
+      <Route index path='/register' element={<Register />}/>
+      </Routes>
     </>
   )
 }
