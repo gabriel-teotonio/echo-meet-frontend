@@ -1,0 +1,20 @@
+
+.card {
+    background-color: #1a1a1a;
+    border: 1px solid #fff;
+    width: 300px;
+    padding: 20px;
+}
+
+.btnPrimary {
+    background: linear-gradient(#3A21B8, #231471);
+    color: white;
+    border: 0;
+    transition: all 0.2s ease-in-out;
+    height: 80px;
+
+    &:hover {
+        color: currentColor;
+        transform: translateY(-4px);
+    }
+}
