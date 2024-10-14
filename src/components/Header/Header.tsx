@@ -14,6 +14,7 @@ import {
   } from '@mantine/core';
   import { useDisclosure } from '@mantine/hooks';
   import classes from './Header.module.css';
+import { Link } from 'react-router-dom';
   
   export function Header() {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
@@ -26,15 +27,17 @@ import {
           <Group justify="space-between" h="100%">
             <Text size='1.5rem' fw='bold'>Echo Meet</Text>
             <Group h="100%" gap={0} visibleFrom="sm">
-              <a href="#" className={classes.link}>
+              <Link to='/login' className={classes.link}>Login</Link>
+              <Link to='/reunioes' className={classes.link}>Reuniões</Link>
+              {/* <a href="#" className={classes.link}>
                 Inicio
               </a>
               <a href="#" className={classes.link}>
-                Reunições
+                Reuniões
               </a>
               <a href="#" className={classes.link}>
                 Grupos
-              </a>
+              </a> */}
             </Group>
   
             <Group visibleFrom="sm">

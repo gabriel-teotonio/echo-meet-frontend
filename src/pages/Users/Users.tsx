@@ -1,5 +1,5 @@
 import { ActionIcon, Group, Table, Title } from '@mantine/core';
-import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { IconAi, IconEdit, IconTrash } from '@tabler/icons-react';
 
 const elements = [
     { email: 'joao.silva@finance.com', mass: 65.38, symbol: 'JS', name: 'João Silva', grupo: 'Departamento Financeiro' },
