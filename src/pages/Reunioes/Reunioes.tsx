@@ -9,7 +9,6 @@ const reunioes = [
     { titulo: 'Reunião com Cliente A', data: '01/10/2024', descricao: 'Discussão sobre o projeto X' },
     { titulo: 'Reunião com Cliente A', data: '01/10/2024', descricao: 'Discussão sobre o projeto X' },
     { titulo: 'Reunião com Cliente A', data: '01/10/2024', descricao: 'Discussão sobre o projeto X' },
-    { titulo: 'Reunião com Cliente A', data: '01/10/2024', descricao: 'Discussão sobre o projeto X' },
     // ... outras reuniões
 ];
 
