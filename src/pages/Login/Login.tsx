@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card, TextInput, Button, Title, Flex, Text } from '@mantine/core';
-import { Link } from 'react-router-dom';
 
 export const Login: React.FC = () => {
   return (
@@ -40,12 +39,6 @@ export const Login: React.FC = () => {
         >
           Entrar
         </Button>
-        
-        <Text color="dimmed" style={{ marginTop: 10, textAlign: 'center' }}>
-          <Link to="./Register" style={{ color: '#3A21B8' }}>
-            Esqueceu a senha?
-          </Link>
-        </Text>
       </Card>
     </Flex>
   );
