@@ -1,5 +1,6 @@
-import { ActionIcon, Group, Table, Title } from '@mantine/core';
-import { IconAi, IconEdit, IconTrash } from '@tabler/icons-react';
+import { ActionIcon, Button, Flex, Group, Modal, Select, Table, TextInput, Title } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconEdit, IconMail, IconTrash, IconUser } from '@tabler/icons-react';
 
 const elements = [
     { email: 'joao.silva@finance.com', mass: 65.38, symbol: 'JS', name: 'João Silva', grupo: 'Departamento Financeiro' },
@@ -11,6 +12,8 @@ const elements = [
   
 
 export function Users() {
+  const [opened, { open, close }] = useDisclosure(false);
+
   const rows = elements.map((element) => (
     <Table.Tr key={element.name}>
         <Table.Td>{element.name}</Table.Td>
@@ -31,8 +34,36 @@ export function Users() {
 
   return (
     <>
-    <Title mb={'md'} order={3}>Usuários</Title>
+      <Modal opened={opened} onClose={close} title="Criar novo Usuário" centered>
+        <Flex gap={'sm'} direction={'column'}>
+          <TextInput
+          leftSectionPointerEvents="none"
+          leftSection={<IconUser size={14} />}
+          label="Nome completo"
+          placeholder="nome completo"
+        />
+          <TextInput
+          leftSectionPointerEvents="none"
+          leftSection={<IconMail size={14} />}
+          label="Email"
+          placeholder="Email"
+        />
+        <Select
+          label="Selecionar grupo"
+          placeholder="escolha um grupo"
+          data={['Financeiro', 'Tecnologia', 'RH', 'Administrativo']}
+          searchable
+          nothingFoundMessage="Nenhum grupo encontrado"
+        />
+        </Flex>
+      </Modal>
+    <Flex justify='space-between' align={'center'}>
+      <Title order={3}>Usuários</Title>
+      <Button onClick={open}>Criar novo Usuário</Button>
+    </Flex>
+    
     <Table 
+    mt={'lg'}
     bg={'#161324'} 
     style={{borderRadius: '10px'}}>
       <Table.Thead>
