@@ -8,6 +8,7 @@ import { Users } from './pages/Users/Users'
 import { Summary } from './pages/Summary/Summary'
 import { Reunioes } from './pages/Reunioes/Reunioes'
 import { Grupos } from './pages/Grupos/Grupos'
+import { GrupoDetail } from './pages/GrupoDetail/GrupoDetail'
 
 function App() {
  
@@ -20,6 +21,7 @@ function App() {
           <Route path='/summary' element={<Summary />}/>
           <Route path='/reunioes' element={<Reunioes />} />
           <Route path='/grupos' element={<Grupos />} />
+          <Route path='/grupos/:id' element={<GrupoDetail />} />
         </Route>
       <Route index path='/login' element={<Login />}/>
       <Route index path='/register' element={<Register />}/>
