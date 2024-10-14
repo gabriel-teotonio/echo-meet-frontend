@@ -7,6 +7,7 @@ import './App.css'
 import { Users } from './pages/Users/Users'
 import { Summary } from './pages/Summary/Summary'
 import { Reunioes } from './pages/Reunioes/Reunioes'
+import { Grupos } from './pages/Grupos/Grupos'
 
 function App() {
  
@@ -18,6 +19,7 @@ function App() {
           <Route path='/users' element={<Users />}/>
           <Route path='/summary' element={<Summary />}/>
           <Route path='/reunioes' element={<Reunioes />} />
+          <Route path='/grupos' element={<Grupos />} />
         </Route>
       <Route index path='/login' element={<Login />}/>
       <Route index path='/register' element={<Register />}/>

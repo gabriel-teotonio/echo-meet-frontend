@@ -29,15 +29,9 @@ import { Link } from 'react-router-dom';
             <Group h="100%" gap={0} visibleFrom="sm">
               <Link to='/login' className={classes.link}>Login</Link>
               <Link to='/reunioes' className={classes.link}>Reuniões</Link>
-              {/* <a href="#" className={classes.link}>
-                Inicio
-              </a>
-              <a href="#" className={classes.link}>
-                Reuniões
-              </a>
-              <a href="#" className={classes.link}>
-                Grupos
-              </a> */}
+              <Link to='/users' className={classes.link}>Usuários</Link>
+              <Link to='/grupos' className={classes.link}>Grupos</Link>
+  
             </Group>
   
             <Group visibleFrom="sm">
