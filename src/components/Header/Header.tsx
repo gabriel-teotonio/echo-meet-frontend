@@ -14,13 +14,20 @@ import {
   } from '@mantine/core';
   import { useDisclosure } from '@mantine/hooks';
   import classes from './Header.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
   
   export function Header() {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
-
+    const navigate = useNavigate()
+    const { logout } = useAuth()
   
+    const handleSignOut = () => {
+      navigate('/login')
+      logout()
+    }
+
     return (
       <Box pb={10}>
         <header className={classes.header}>
@@ -29,19 +36,13 @@ import { Link } from 'react-router-dom';
             <Group h="100%" gap={0} visibleFrom="sm">
               <Link to='/login' className={classes.link}>Login</Link>
               <Link to='/reunioes' className={classes.link}>Reuniões</Link>
-              {/* <a href="#" className={classes.link}>
-                Inicio
-              </a>
-              <a href="#" className={classes.link}>
-                Reuniões
-              </a>
-              <a href="#" className={classes.link}>
-                Grupos
-              </a> */}
+              <Link to='/users' className={classes.link}>Usuários</Link>
+              <Link to='/grupos' className={classes.link}>Grupos</Link>
+  
             </Group>
   
             <Group visibleFrom="sm">
-              <Button>Perfil</Button>
+              <Button onClick={handleSignOut}>Sair da conta</Button>
             </Group>
   
             <Burger color='violet.7' opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
