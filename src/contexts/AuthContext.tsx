@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 import axios from 'axios';
 
 interface AuthContextProps {
@@ -21,15 +21,15 @@ interface IChildren {
   children: ReactNode;
 }
 
-const getUserLocalStorage = () => {
-  const user_id = localStorage.getItem('user_id');
-  const token = localStorage.getItem('token');
-  const user_type = localStorage.getItem('user_type');
-  if (user_id && token && user_type) {
-    return { id: user_id, token, user_type };
-  }
-  return null;
-}
+// const getUserLocalStorage = () => {
+//   const user_id = localStorage.getItem('user_id');
+//   const token = localStorage.getItem('token');
+//   const user_type = localStorage.getItem('user_type');
+//   if (user_id && token && user_type) {
+//     return { id: user_id, token, user_type };
+//   }
+//   return null;
+// }
 
 
 export const AuthProvider= ({ children }: IChildren) => {
