@@ -1,12 +1,10 @@
 import { Container, Loader, Stack } from "@mantine/core";
 import { Navigate, Outlet } from "react-router-dom";
 import { Header } from "../components/Header/Header";
+import { useAuth } from "../contexts/AuthContext";
 
 export const PrivateLayout = () => {
-    // esses dados vem do backend, mas estão localmente por enquanto.
-    // const { isLogged, isLoading } = true
-    const isLogged = true;
-    const isLoading = false;
+    const { user: isLogged, isLoading } = useAuth()
 
     // mostra loading enquanto verifica se user esta logado
     if (isLoading) return <Stack h="100%" w="100%" justify='center' align='center'><Loader /></Stack> 
