@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Text, Button, Flex } from '@mantine/core';
-
+import { IconPlayerPlay } from '@tabler/icons-react';
 
 interface Gravacao {
   id: number;
@@ -33,6 +33,7 @@ const GravacoesCard: React.FC<GravacoesCardProps> = ({ gravacao, aoGerarResumo, 
           Gerar Resumo
         </Button>
         <Button color="teal" onClick={() => aoReproduzirAudio(gravacao.id)} style={{ marginLeft: '10px' }}>
+        < IconPlayerPlay style={{ marginRight: '5px' }}> </IconPlayerPlay>
           Play
         </Button>
       </Flex>
