@@ -12,6 +12,8 @@ interface IUser {
   password: string;
 }
 
+
+
 export function Users() {
   const [users, setUsers] = useState<IUser[]>([]); // Estado para armazenar os usuários
   const [opened, { open, close }] = useDisclosure(false);

@@ -1,57 +1,188 @@
-import React from 'react';
-import { Container, Flex, Text } from '@mantine/core';
-import GravacoesCard from '../../components/GravacoesCard/GravacoesCard';
+import React, { useState, useEffect } from "react";
+import { Button, Card, Flex, Modal, Text, Select } from "@mantine/core";
+import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
+import { useDisclosure } from "@mantine/hooks";
+import { useAuth } from "../../contexts/AuthContext";
 
-interface Gravacao {
-  id: number;
-  titulo: string;
-  data: string;
-  descricao: string; // Adicione uma descrição
+interface IAudioFile {
+  name: string;
+  urlAudio: string;
+  file: File; // Adicionado para referenciar o arquivo original
 }
 
-// Dados simulados de gravações
-const gravacoes: Gravacao[] = [
-  {
-    id: 1,
-    titulo: 'Reunião semanal - Projeto X',
-    data: '2024-10-15',
-    descricao: 'Resumo da reunião onde discutimos os próximos passos do projeto X.',
-  },
-  {
-    id: 2,
-    titulo: 'Planejamento de Sprint',
-    data: '2024-10-10',
-    descricao: 'Planejamento da próxima sprint com foco em melhorias no sistema.',
-  },
-];
+interface IGrupo {
+  id: string;
+  name: string;
+}
 
-const DashboardGravacoes: React.FC = () => {
-  const handleGerarResumo = (id: number) => {
-    console.log(`Gerando resumo para a gravação com ID ${id}`);
+export default function GravacoesDashboard() {
+  const [audioFiles, setAudioFiles] = useState<IAudioFile[]>([]);
+  const [resumos, setResumos] = useState<string[]>([]); // Para armazenar os resumos gerados
+  const [feedbackText, setFeedbackText] = useState('Estamos gerando o resumo da reunião...');
+  const [opened, { open, close }] = useDisclosure(false);
+  const [grupos, setGrupos] = useState<IGrupo[]>([]); // Armazena grupos
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null); // Grupo selecionado
+  const [modalGroupOpened, { open: openGroupModal, close: closeGroupModal }] = useDisclosure(false);
+  const { user } = useAuth();
+
+  // Função para buscar grupos
+  const fetchGroups = async () => {
+    try {
+      const response = await axios.get('http://45.169.29.120:8000/groups', {
+        headers: {
+          Authorization: `Bearer ${user?.access_token}`,
+        },
+      });
+      setGrupos(response.data);
+    } catch (error) {
+      console.error("Erro ao buscar grupos:", error);
+    }
   };
 
-  const handleReproduzirAudio = (id: number) => {
-    console.log(`Tocando áudio da gravação com ID ${id}`);
+  useEffect(() => {
+    fetchGroups(); // Chama a função ao montar o componente
+  }, []);
+
+  // Função para processar o upload de arquivos
+  const handleAudioUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+          const base64Audio = reader.result as string;
+          setAudioFiles((prev) => [...prev, { name: file.name, urlAudio: base64Audio, file }]);
+        };
+      });
+    }
+  };
+
+  // Função para enviar o áudio e gerar o resumo
+  const aoGerarResumo = (audioFile: IAudioFile) => {
+    openGroupModal(); // Abre o modal de seleção de grupo
+  };
+
+  const handleGenerateSummary = async (audioFile: IAudioFile) => {
+    if (!selectedGroup) {
+      setFeedbackText("Por favor, selecione um grupo.");
+      open(); // Abre o modal para mostrar o feedback
+      return;
+    }
+
+    open(); // Abre o modal de feedback
+    const formData = new FormData();
+    formData.append("audio_file", audioFile.file); // Usando a chave 'audio_file'
+    
+    try {
+      const response = await axios.post(`http://45.169.29.120:8000/transcricao-resumo/${selectedGroup}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${user?.access_token}`,
+        },
+      });
+      if(response.status === 200) {
+        setFeedbackText("Sua reunião foi transcrita com sucesso! Confira os detalhes.");
+        setResumos((prev) => [...prev, response.data.transcription]);
+      } else {
+        setFeedbackText('Erro ao transcrever o áudio, tente novamente!');
+      }
+    } catch (error) {
+      console.error("Erro ao transcrever o áudio:", error);
+      setFeedbackText('Erro ao transcrever o áudio, tente novamente!');
+    } finally {
+      closeGroupModal();
+    }
   };
 
   return (
-    <Container>
-      <Text ta="center" size="xl" fw={700} mb="xl" color="white">
-        Dashboard de Gravações
-      </Text>
+    <div style={{ padding: "20px" }}>
+      <Modal
+        opened={opened} 
+        onClose={close} 
+        title="Resumo de reunião"
+      >
+        <Text>{feedbackText}</Text>
+      </Modal>
 
-      <Flex direction="column" gap="md">
-        {gravacoes.map((gravacao) => (
-          <GravacoesCard
-            key={gravacao.id}
-            gravacao={gravacao}
-            aoGerarResumo={handleGerarResumo}
-            aoReproduzirAudio={handleReproduzirAudio}
-          />
-        ))}
-      </Flex>
-    </Container>
+      <Modal
+        opened={modalGroupOpened}
+        onClose={closeGroupModal}
+        title="Selecionar Grupo"
+      >
+        <Select
+          label="Escolha um grupo"
+          placeholder="Selecione um grupo"
+          data={grupos.map(grupo => ({ value: grupo.name, label: grupo.name }))}
+          onChange={setSelectedGroup}
+        />
+        <Button 
+          onClick={() => {
+            if (selectedGroup) {
+              closeGroupModal();
+              handleGenerateSummary(audioFiles[audioFiles.length - 1]); // Passa o último arquivo de áudio
+            }
+          }}
+          mt="md"
+        >
+          Gerar Resumo
+        </Button>
+      </Modal>
+
+      <h1>Uploader de Áudios MP3</h1>
+      
+      <input
+        type="file"
+        accept="audio/mp3"
+        multiple
+        onChange={handleAudioUpload}
+        style={{ marginBottom: "20px" }}
+      />
+      
+      {audioFiles.length === 0 ? (
+        <p>Nenhum áudio enviado.</p>
+      ) : (
+        <ul>
+          {audioFiles.map((audio, index) => (
+           <Card
+             shadow="sm" 
+             padding="lg" 
+             style={{ border: '1px solid #55506E', backgroundColor: '#161324' }} 
+             radius="md" 
+             key={index}
+           >
+             <Text size="xl" fw={500} c="white">{audio.name}</Text>
+             <Flex gap={'md'} justify="flex-end" mt="md">
+               <audio controls>
+                 <source src={audio.urlAudio} type="audio/mp3" />
+                 Seu navegador não suporta o elemento de áudio.
+               </audio>
+               <Button 
+                 variant="outline" 
+                 color="#5A3FE5" 
+                 onClick={() => aoGerarResumo(audio)} // Passando o arquivo de áudio
+               >
+                 Gerar Resumo
+               </Button>
+             </Flex>
+           </Card>
+          ))}
+        </ul>
+      )}
+
+      {resumos.length > 0 && (
+        <div style={{ marginTop: "20px", color: "white" }}>
+          <h2>Resumos Gerados:</h2>
+          <ul>
+            {resumos.map((resumo, index) => (
+              <li key={index}>
+                <ReactMarkdown>{resumo}</ReactMarkdown> {/* Renderiza o resumo em Markdown */}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   );
-};
-
-export default DashboardGravacoes;
+}
