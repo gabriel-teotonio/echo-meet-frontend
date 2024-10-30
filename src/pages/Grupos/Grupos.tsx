@@ -17,6 +17,8 @@ interface IGroup {
   emails: string[];
 }
 
+
+
 export function Grupos() {
   const [emails, setEmails] = useState<string[]>([]); // Estado para armazenar os emails
   const [selectedEmails, setSelectedEmails] = useState<string[]>([]); // Emails escolhidos no MultiSelect

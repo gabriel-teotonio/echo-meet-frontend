@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
-import { Flex, Text, Title, Modal, Button, Card } from "@mantine/core";
+import { Flex, Text, Title, Modal, Button, Card, TextInput } from "@mantine/core";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import Markdown from "react-markdown";
 import classes from './GruposDetail.module.css';
 
+export interface IDashboardOption {
+    numeric: string[];
+    percent: string[];
+    problematic: string[];
+}
 
 export interface IReuniao {
     summary_text: string;
@@ -21,11 +26,13 @@ export interface IEmail {
 export function GrupoDetail() {
     const { id } = useParams();
     const { user } = useAuth();
+
+    const [groupName, setGroupName] = useState<string>("");
+    const [newEmail, setNewEmail] = useState<string>("");
     const [reunioes, setReunioes] = useState<IReuniao[]>([]);
     const [emails, setEmails] = useState<IEmail[]>([]);
     const [selectedReuniao, setSelectedReuniao] = useState<IReuniao | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
-
     // Função para buscar os resumos das reuniões
     const getSummaries = async () => {
         try {
@@ -54,6 +61,38 @@ export function GrupoDetail() {
         }
     };
 
+    // const getDashboardOptions = async (summaryId: string) => {
+    //     try {
+    //         const res = await axios.get(`http://45.169.29.120:8000/generate-dashboard/${summaryId}/numeric`, {
+    //             headers: {
+    //                 Authorization: `Bearer ${user?.access_token}`,
+    //             },
+    //         });
+    //         console.log(res);
+    //     } catch (error: any) {
+    //         if (error.response && error.response.status === 404) {
+    //         } else {
+    //             console.error("Erro ao buscar opções do dashboard:", error);
+    //         }
+    //     }
+    // };
+
+    const updateGroupName = async () => {
+        try {
+            await axios.put(`http://45.169.29.120:8000/grupos-update-name/${id}`, 
+                { name: groupName },
+                {
+                    headers: {
+                        Authorization: `Bearer ${user?.access_token}`,
+                    },
+                }
+            );
+            alert("Nome do grupo atualizado com sucesso!");
+        } catch (error) {
+            console.error("Erro ao atualizar o nome do grupo:", error);
+        }
+    };
+
     useEffect(() => {
         getSummaries();
         getEmails();
@@ -62,6 +101,7 @@ export function GrupoDetail() {
     const openModal = (reuniao: IReuniao) => {
         setSelectedReuniao(reuniao);
         setModalOpen(true);
+        // getDashboardOptions(reuniao.summary_id);    
     };
 
     const closeModal = () => {
@@ -72,7 +112,12 @@ export function GrupoDetail() {
     return (
         <>
             <Text c="gray.3">Detalhes do grupo</Text>
-            <Title fz={'h2'}>Grupo {id}</Title>
+            <TextInput
+                    value={groupName}
+                    onChange={(e) => setGroupName(e.currentTarget.value)}
+                    placeholder="Atualize o nome do grupo"
+                />
+                <Button onClick={updateGroupName} mt="sm" color="blue">Atualizar Nome</Button>
 
             <Flex justify={'space-between'} h={'100%'}>
                 {/* Lista de Resumos das Reuniões */}
