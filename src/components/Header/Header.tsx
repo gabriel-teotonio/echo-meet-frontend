@@ -34,7 +34,7 @@ import { useAuth } from '../../contexts/AuthContext';
           <Group justify="space-between" h="100%">
             <Text size='1.5rem' fw='bold'>Echo Meet</Text>
             <Group h="100%" gap={0} visibleFrom="sm">
-              <Link to='/login' className={classes.link}>Login</Link>
+              <Link to='/' className={classes.link}>Home</Link>
               <Link to='/reunioes' className={classes.link}>Reuniões</Link>
               <Link to='/users' className={classes.link}>Usuários</Link>
               <Link to='/grupos' className={classes.link}>Grupos</Link>

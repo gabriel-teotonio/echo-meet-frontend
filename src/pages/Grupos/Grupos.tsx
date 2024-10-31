@@ -6,7 +6,7 @@ import { IconEdit, IconTrash } from "@tabler/icons-react";
 import classes from "./Grupos.module.css";
 import { useNavigate } from "react-router-dom";
 
-interface IUser {
+export interface IUser {
   email: string;
   name: string;
 }

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Flex, Text, Title, Modal, Button, Card, TextInput } from "@mantine/core";
+import { Flex, Text, Modal, Button, Card, TextInput, Select } from "@mantine/core";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import Markdown from "react-markdown";
 import classes from './GruposDetail.module.css';
+import { IUser } from "../Grupos/Grupos";
 
 export interface IDashboardOption {
     numeric: string[];
@@ -28,11 +29,13 @@ export function GrupoDetail() {
     const { user } = useAuth();
 
     const [groupName, setGroupName] = useState<string>("");
-    const [newEmail, setNewEmail] = useState<string>("");
+    const [newEmail, setNewEmail] = useState<string>(""); // Email a ser adicionado
+    const [userEmails, setUserEmails] = useState<string[]>([]); // Opções de emails
     const [reunioes, setReunioes] = useState<IReuniao[]>([]);
     const [emails, setEmails] = useState<IEmail[]>([]);
     const [selectedReuniao, setSelectedReuniao] = useState<IReuniao | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
+
     // Função para buscar os resumos das reuniões
     const getSummaries = async () => {
         try {
@@ -61,21 +64,46 @@ export function GrupoDetail() {
         }
     };
 
-    // const getDashboardOptions = async (summaryId: string) => {
-    //     try {
-    //         const res = await axios.get(`http://45.169.29.120:8000/generate-dashboard/${summaryId}/numeric`, {
-    //             headers: {
-    //                 Authorization: `Bearer ${user?.access_token}`,
-    //             },
-    //         });
-    //         console.log(res);
-    //     } catch (error: any) {
-    //         if (error.response && error.response.status === 404) {
-    //         } else {
-    //             console.error("Erro ao buscar opções do dashboard:", error);
-    //         }
-    //     }
-    // };
+    // Função para buscar emails dos usuários existentes para o Select
+    useEffect(() => {
+        const fetchEmails = async () => {
+          try {
+            const response = await axios.get<IUser[]>("http://45.169.29.120:8000/users", {
+              headers: {
+                Authorization: `Bearer ${user?.access_token}`, // Inclui o token no header da requisição
+              },
+            });
+            const emailList = response.data.map((user) => user.email); // Extrai apenas os emails
+            setUserEmails(emailList); // Popula a lista de emails para o MultiSelect
+          } catch (error) {
+            console.error("Erro ao buscar usuários:", error);
+          }
+        };
+        fetchEmails();
+      }, [user?.access_token]);
+
+    // Função para adicionar um novo e-mail ao grupo
+    const addEmailToGroup = async () => {
+        if (newEmail) {
+            try {
+                await axios.post(`http://45.169.29.120:8000/grupos/${id}/emails`, 
+                    { email: newEmail },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${user?.access_token}`,
+                        },
+                    }
+                );
+                alert("E-mail adicionado com sucesso!");
+                setNewEmail(""); // Limpa o campo após adicionar
+                getEmails(); // Atualiza a lista de e-mails
+            } catch (error) {
+                console.error("Erro ao adicionar e-mail ao grupo:", error);
+            }
+        } else {
+            alert("Por favor, selecione um e-mail válido.");
+        }
+    };
 
     const updateGroupName = async () => {
         try {
@@ -101,7 +129,6 @@ export function GrupoDetail() {
     const openModal = (reuniao: IReuniao) => {
         setSelectedReuniao(reuniao);
         setModalOpen(true);
-        // getDashboardOptions(reuniao.summary_id);    
     };
 
     const closeModal = () => {
@@ -113,11 +140,11 @@ export function GrupoDetail() {
         <>
             <Text c="gray.3">Detalhes do grupo</Text>
             <TextInput
-                    value={groupName}
-                    onChange={(e) => setGroupName(e.currentTarget.value)}
-                    placeholder="Atualize o nome do grupo"
-                />
-                <Button onClick={updateGroupName} mt="sm" color="blue">Atualizar Nome</Button>
+                value={groupName}
+                onChange={(e) => setGroupName(e.currentTarget.value)}
+                placeholder="Atualize o nome do grupo"
+            />
+            <Button onClick={updateGroupName} mt="sm" color="blue">Atualizar Nome</Button>
 
             <Flex justify={'space-between'} h={'100%'}>
                 {/* Lista de Resumos das Reuniões */}
@@ -159,6 +186,19 @@ export function GrupoDetail() {
                     ) : (
                         <Text color="dimmed">Nenhum e-mail encontrado para este grupo.</Text>
                     )}
+
+                    {/* Select para adicionar novo e-mail */}
+                    <Select
+                        searchable
+                        value={newEmail}
+                        onChange={(value) => value && setNewEmail(value)}
+                        data={userEmails}
+                        placeholder="Pesquisar e adicionar e-mail"
+                        mt="md"
+                    />
+                    <Button onClick={addEmailToGroup} color="green" mt="sm">
+                        Adicionar E-mail
+                    </Button>
                 </Flex>
             </Flex>
 
