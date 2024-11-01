@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Flex, Text, Modal, Button, Card, TextInput, Select } from "@mantine/core";
+import { Flex, Text, Modal, Button, Card, TextInput, Select, Divider } from "@mantine/core";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
@@ -17,6 +17,7 @@ export interface IReuniao {
     summary_text: string;
     meeting_name: string;
     summary_id: string;
+    dashboard_data: string;
 }
 
 export interface IEmail {
@@ -29,34 +30,37 @@ export function GrupoDetail() {
     const { user } = useAuth();
 
     const [groupName, setGroupName] = useState<string>("");
-    const [newEmail, setNewEmail] = useState<string>(""); // Email a ser adicionado
-    const [userEmails, setUserEmails] = useState<string[]>([]); // Opções de emails
+    const [newEmail, setNewEmail] = useState<string>("");
+    const [userEmails, setUserEmails] = useState<string[]>([]);
     const [reunioes, setReunioes] = useState<IReuniao[]>([]);
     const [emails, setEmails] = useState<IEmail[]>([]);
     const [selectedReuniao, setSelectedReuniao] = useState<IReuniao | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
 
-    // Função para buscar os resumos das reuniões
+    // Novos estados
+    const [selectedValueType, setSelectedValueType] = useState<string>("numeric");
+    const [dashboardHtml, setDashboardHtml] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [dashboardOptions, setDashboardOptions] = useState<IDashboardOption | null>(null);
+    const [dashMetricsHtml, setDashMetricsHtml] = useState<string | null>(null);
+
+
     const getSummaries = async () => {
         try {
             const res = await axios.get(`http://45.169.29.120:8000/grupos/${id}/reunioes`, {
-                headers: {
-                    Authorization: `Bearer ${user?.access_token}`,
-                },
+                headers: { Authorization: `Bearer ${user?.access_token}` },
             });
             setReunioes(res.data);
+            console.log(res.data)
         } catch (error) {
             console.error("Erro ao buscar resumos:", error);
         }
     };
 
-    // Função para buscar os e-mails dos membros do grupo
     const getEmails = async () => {
         try {
             const res = await axios.get(`http://45.169.29.120:8000/grupos/${id}/emails`, {
-                headers: {
-                    Authorization: `Bearer ${user?.access_token}`,
-                },
+                headers: { Authorization: `Bearer ${user?.access_token}` },
             });
             setEmails(res.data);
         } catch (error) {
@@ -64,39 +68,30 @@ export function GrupoDetail() {
         }
     };
 
-    // Função para buscar emails dos usuários existentes para o Select
     useEffect(() => {
         const fetchEmails = async () => {
-          try {
-            const response = await axios.get<IUser[]>("http://45.169.29.120:8000/users", {
-              headers: {
-                Authorization: `Bearer ${user?.access_token}`, // Inclui o token no header da requisição
-              },
-            });
-            const emailList = response.data.map((user) => user.email); // Extrai apenas os emails
-            setUserEmails(emailList); // Popula a lista de emails para o MultiSelect
-          } catch (error) {
-            console.error("Erro ao buscar usuários:", error);
-          }
+            try {
+                const response = await axios.get<IUser[]>("http://45.169.29.120:8000/users", {
+                    headers: { Authorization: `Bearer ${user?.access_token}` },
+                });
+                const emailList = response.data.map((user) => user.email);
+                setUserEmails(emailList);
+            } catch (error) {
+                console.error("Erro ao buscar usuários:", error);
+            }
         };
         fetchEmails();
-      }, [user?.access_token]);
+    }, [user?.access_token]);
 
-    // Função para adicionar um novo e-mail ao grupo
     const addEmailToGroup = async () => {
         if (newEmail) {
             try {
-                await axios.post(`http://45.169.29.120:8000/grupos/${id}/emails`, 
-                    { email: newEmail },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${user?.access_token}`,
-                        },
-                    }
-                );
+                await axios.post(`http://45.169.29.120:8000/grupos/${id}/emails`, { email: newEmail }, {
+                    headers: { Authorization: `Bearer ${user?.access_token}` },
+                });
                 alert("E-mail adicionado com sucesso!");
-                setNewEmail(""); // Limpa o campo após adicionar
-                getEmails(); // Atualiza a lista de e-mails
+                setNewEmail("");
+                getEmails();
             } catch (error) {
                 console.error("Erro ao adicionar e-mail ao grupo:", error);
             }
@@ -107,14 +102,9 @@ export function GrupoDetail() {
 
     const updateGroupName = async () => {
         try {
-            await axios.put(`http://45.169.29.120:8000/grupos-update-name/${id}`, 
-                { name: groupName },
-                {
-                    headers: {
-                        Authorization: `Bearer ${user?.access_token}`,
-                    },
-                }
-            );
+            await axios.put(`http://45.169.29.120:8000/grupos-update-name/${id}`, { name: groupName }, {
+                headers: { Authorization: `Bearer ${user?.access_token}` },
+            });
             alert("Nome do grupo atualizado com sucesso!");
         } catch (error) {
             console.error("Erro ao atualizar o nome do grupo:", error);
@@ -126,15 +116,58 @@ export function GrupoDetail() {
         getEmails();
     }, [id]);
 
-    const openModal = (reuniao: IReuniao) => {
+    const openModal = async (reuniao: IReuniao) => {
         setSelectedReuniao(reuniao);
         setModalOpen(true);
+        setDashboardHtml(null); 
+        setError(null); 
+        // try {
+        //     const res = await axios.get<IDashboardOption>(`http://45.169.29.120:8000/dashboard-options/${reuniao.summary_id}`);
+        //     const organizedOptions = res.data.reduce((acc: Record<string, string[]>, item: { tipo: string, valor: string }) => {
+        //         if (!acc[item.tipo]) {
+        //             acc[item.tipo] = [];
+        //         }
+        //         acc[item.tipo].push(item.valor);
+        //         return acc;
+        //     }, {});
+        //     setDashboardOptions(organizedOptions);
+        // } catch (error) {
+        //     console.error("Erro ao buscar opções de dashboard:", error);
+        // }
     };
 
     const closeModal = () => {
         setModalOpen(false);
         setSelectedReuniao(null);
+        setSelectedValueType("numeric");
     };
+
+    const fetchDashboard = async () => {
+        if (selectedReuniao) {
+            try {
+                const response = await axios.get(`http://45.169.29.120:8000/generate-dashboard/${selectedReuniao.summary_id}/${selectedValueType}`);
+                setDashboardHtml(response.data);
+                setError(null); 
+            } catch (error) {
+                console.error("Erro ao buscar o dashboard:", error);
+                setError("Dashboard não encontrado ou dados insuficientes.");
+                setDashboardHtml(null);
+            }
+        }
+    };
+
+    // const generateDashMetrics = async (valueType: string) => {
+    //     try {
+    //       const res = await axios.get(`http://45.169.29.120:8000/generate-dashboard-by-metrics/5?metrics=${valueType}`);
+    //       console.log("HTML da API:", res.data);
+    //       setDashMetricsHtml(res.data);
+    //       setError(null)
+    //     } catch (error) {
+    //       console.error("Erro ao buscar o dashboard:", error);
+    //       setError("Metricas de Dashboard não encontrado ou dados insuficientes.");
+    //       setDashMetricsHtml(null)
+    //     }
+    //   };
 
     return (
         <>
@@ -147,7 +180,6 @@ export function GrupoDetail() {
             <Button onClick={updateGroupName} mt="sm" color="blue">Atualizar Nome</Button>
 
             <Flex justify={'space-between'} h={'100%'}>
-                {/* Lista de Resumos das Reuniões */}
                 <Flex gap={'sm'} mt={"lg"} direction={'column'}>
                     <Text fw={'bold'}>Resumos de reuniões</Text>
                     {reunioes.map((reuniao) => (
@@ -165,7 +197,6 @@ export function GrupoDetail() {
                     ))}
                 </Flex>
 
-                {/* Lista de E-mails dos Membros */}
                 <Flex 
                     className={classes.participantes}
                     bg={'#161324'} w={'400px'} mt={"lg"} direction={'column'}
@@ -187,7 +218,6 @@ export function GrupoDetail() {
                         <Text color="dimmed">Nenhum e-mail encontrado para este grupo.</Text>
                     )}
 
-                    {/* Select para adicionar novo e-mail */}
                     <Select
                         searchable
                         value={newEmail}
@@ -202,20 +232,64 @@ export function GrupoDetail() {
                 </Flex>
             </Flex>
 
-            {/* Modal para mostrar detalhes da reunião */}
-            <Modal 
-                opened={modalOpen} 
-                onClose={closeModal} 
-                title="Detalhes da Reunião"
-            >
+            <Modal size={'80%'} opened={modalOpen} onClose={closeModal} title="Detalhes da Reunião">
                 {selectedReuniao ? (
                     <>
                         <Text fw={'bold'}>{selectedReuniao.meeting_name}</Text>
                         <Markdown>{selectedReuniao.summary_text}</Markdown>
-                        <Button onClick={closeModal} mt="md">Fechar</Button>
+
+                        <Divider my={'lg'}/>
+                        
+                        {/* <Text fw={'bold'}>Opções de métricas para o Dashboard</Text>
+                        {dashboardOptions && (
+                            Object.entries(dashboardOptions).map(([tipo, valores]) => (
+                                <div key={tipo}>
+                                    <Text fw="bold">{tipo}</Text>
+                                    <Flex gap="sm" mt="xs">
+                                        {valores.map((valor: any) => (
+                                            <Button key={valor} onClick={() => generateDashMetrics(valor)} variant="light">
+                                                {valor}
+                                            </Button>
+                                        ))}
+                                    </Flex>
+                                </div>
+                            ))
+                        )} */}
+                        {/* {error && <Text c="red" mt="sm">{error}</Text>}
+                        {
+                            dashMetricsHtml && (
+                                <iframe 
+                                srcDoc={dashMetricsHtml}
+                                title="Dashboard"
+                                style={{ width: '100%', height: '600px', border: 'none' }}
+                                />
+                            )
+                        }  */}
+
+                        <Select
+                            value={selectedValueType}
+                            onChange={(value) => value && setSelectedValueType(value)}
+                            data={[
+                                { value: 'numeric', label: 'Numérico' },
+                                { value: 'percent', label: 'Percentual' }
+                            ]}
+                            label="Escolha o tipo de valor"
+                            placeholder="Selecione o tipo de valor"
+                            mt="md"
+                        />
+                        <Button onClick={fetchDashboard} mt="sm">Gerar Dashboard</Button>
+                        
+                        {error && <Text c="red" mt="sm">{error}</Text>}
+                        {dashboardHtml && (
+                            <iframe 
+                            srcDoc={dashboardHtml}
+                            title="Dashboard"
+                            style={{ width: '100%', height: '600px', border: 'none' }}
+                          />
+                        )}
                     </>
                 ) : (
-                    <Text>Carregando...</Text>
+                    <Text>Erro: Reunião não encontrada.</Text>
                 )}
             </Modal>
         </>

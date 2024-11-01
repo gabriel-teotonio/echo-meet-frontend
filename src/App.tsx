@@ -10,7 +10,7 @@ import { Reunioes } from './pages/Reunioes/Reunioes';
 import { Grupos } from './pages/Grupos/Grupos';
 import { GrupoDetail } from './pages/GrupoDetail/GrupoDetail';
 import  Gravacoes  from './pages/Gravacoes/GravacoesDashboard'; // Importando o componente Gravacoes
-import { Dashboard } from './pages/Dashboard/Dashboard';
+import SummaryDetail from './pages/SummaryDetail/SummaryDetail';
 
 function App() {
  
@@ -25,7 +25,7 @@ function App() {
           <Route path='/grupos' element={<Grupos />} />
           <Route path='/grupos/:id' element={<GrupoDetail />} />
           <Route path='/gravacoes' element={<Gravacoes />} /> {/* Adicionando a rota para Gravacoes */}
-          <Route path='/dashboard' element={<Dashboard />} /> 
+          <Route path='/reuniao/:id' element={<SummaryDetail />} /> 
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
