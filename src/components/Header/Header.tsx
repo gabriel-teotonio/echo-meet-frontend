@@ -38,6 +38,7 @@ import { useAuth } from '../../contexts/AuthContext';
               <Link to='/users' className={classes.link}>Usuários</Link>
               <Link to='/grupos' className={classes.link}>Grupos</Link>
               <Link to='/gravacoes' className={classes.link}>Upload de arquivos</Link>
+              {/* <Link to='/gravacao' className={classes.link}>Upload de arquivos</Link> */}
               {/* <Link to='/dashboard' className={classes.link}>Dashboards</Link> */}
             </Group>
   

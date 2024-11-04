@@ -21,7 +21,7 @@ export function Home() {
                 </Button>
             </Flex>
             <Flex direction={'column'} gap={'xs'}>
-                <Button className={classes.btnPrimary} leftSection={<img src={IconMic}/>} variant="default">
+                <Button onClick={() => navigate('/gravacao')} className={classes.btnPrimary} leftSection={<img src={IconMic}/>} variant="default">
                     Gravar Reunião
                 </Button>
                 <Button 

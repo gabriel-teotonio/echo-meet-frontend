@@ -53,7 +53,6 @@ export const AuthProvider= ({ children }: IChildren) => {
         },
       });
 
-      console.log(response.data)
       // Armazena no estado
       const { user_id, access_token, user_type } = response.data;
       setUser({ user_id, access_token, user_type });

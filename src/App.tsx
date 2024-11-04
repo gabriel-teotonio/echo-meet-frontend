@@ -11,6 +11,7 @@ import { Grupos } from './pages/Grupos/Grupos';
 import { GrupoDetail } from './pages/GrupoDetail/GrupoDetail';
 import  Gravacoes  from './pages/Gravacoes/GravacoesDashboard'; // Importando o componente Gravacoes
 import SummaryDetail from './pages/SummaryDetail/SummaryDetail';
+import Gravacao from './pages/Gravacao/Gravacao';
 
 function App() {
  
@@ -26,6 +27,7 @@ function App() {
           <Route path='/grupos/:id' element={<GrupoDetail />} />
           <Route path='/gravacoes' element={<Gravacoes />} /> {/* Adicionando a rota para Gravacoes */}
           <Route path='/reuniao/:id' element={<SummaryDetail />} /> 
+          <Route path='/gravacao' element={<Gravacao />} /> 
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
