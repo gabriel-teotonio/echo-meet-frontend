@@ -1,16 +1,14 @@
 import {
     Group,
     Button,
-    UnstyledButton,
     Divider,
-    Center,
     Box,
     Burger,
     Drawer,
-    Collapse,
     ScrollArea,
     rem,
     Text,
+    Flex,
   } from '@mantine/core';
   import { useDisclosure } from '@mantine/hooks';
   import classes from './Header.module.css';
@@ -19,7 +17,6 @@ import { useAuth } from '../../contexts/AuthContext';
   
   export function Header() {
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
-    const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
     const navigate = useNavigate()
     const { logout } = useAuth()
   
@@ -32,7 +29,7 @@ import { useAuth } from '../../contexts/AuthContext';
       <Box pb={10}>
         <header className={classes.header}>
           <Group justify="space-between" h="100%">
-            <Text size='1.5rem' fw='bold'>Echo Meet</Text>
+            <Text style={{cursor: 'pointer'}} onClick={() => navigate('/')} size='1.5rem' fw='bold'>Echo Meet</Text>
             <Group h="100%" gap={0} visibleFrom="sm">
               <Link to='/' className={classes.link}>Home</Link>
               <Link to='/users' className={classes.link}>Usuários</Link>
@@ -59,33 +56,18 @@ import { useAuth } from '../../contexts/AuthContext';
           hiddenFrom="sm"
           zIndex={1000000}
         >
-          <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
-            <Divider my="sm" />
+          <ScrollArea bg={'dark.8'} h={`calc(100vh - ${rem(80)})`} mx="-md">
   
-            <a href="#" className={classes.link}>
-              Home
-            </a>
-            <UnstyledButton className={classes.link} onClick={toggleLinks}>
-              <Center inline>
-                <Box component="span" mr={5}>
-                  Features
-                </Box>
-              </Center>
-            </UnstyledButton>
-            <Collapse in={linksOpened}></Collapse>
-            <a href="#" className={classes.link}>
-              Learn
-            </a>
-            <a href="#" className={classes.link}>
-              Academy
-            </a>
+            <Flex mt={'lg'} direction={'column'} h="100%" gap={'lg'}>
+              <Link to='/' className={classes.link}>Home</Link>
+              <Link to='/users' className={classes.link}>Usuários</Link>
+              <Link to='/grupos' className={classes.link}>Grupos</Link>
+              <Link to='/gravacoes' className={classes.link}>Upload de arquivos</Link>
+              {/* <Link to='/gravacao' className={classes.link}>Upload de arquivos</Link> */}
+              {/* <Link to='/dashboard' className={classes.link}>Dashboards</Link> */}
+            </Flex>
   
             <Divider my="sm" />
-  
-            <Group justify="center" grow pb="xl" px="md">
-              <Button variant="default">Log in</Button>
-              <Button>Sign up</Button>
-            </Group>
           </ScrollArea>
         </Drawer>
       </Box>

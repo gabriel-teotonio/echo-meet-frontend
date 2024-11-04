@@ -11,20 +11,21 @@ export function Home() {
 
     return (
         <>
-            <SimpleGrid spacing={"xs"} cols={4}>
+            <SimpleGrid spacing={"xs"} cols={1}>
             <Flex direction={'column'} gap={'xs'}>
-                <Button onClick={() => navigate('/grupos')} className={classes.btnPrimary} leftSection={<img src={IconAdd}/>} variant="default">
+                <Button size="compact-xs" onClick={() => navigate('/grupos')} className={classes.btnPrimary} leftSection={<img src={IconAdd}/>} variant="default">
                     Criar novo grupo
                 </Button>
-                <Button onClick={() => navigate('/gravacoes')} className={classes.btnPrimary} leftSection={<img src={IconIA}/>} variant="default">
+                <Button  size="compact-xs" onClick={() => navigate('/gravacoes')} className={classes.btnPrimary} leftSection={<img src={IconIA}/>} variant="default">
                     Gerar Resumo de Reunião 
                 </Button>
             </Flex>
             <Flex direction={'column'} gap={'xs'}>
-                <Button onClick={() => navigate('/gravacao')} className={classes.btnPrimary} leftSection={<img src={IconMic}/>} variant="default">
+                <Button  size="compact-xs" onClick={() => navigate('/gravacao')} className={classes.btnPrimary} leftSection={<img src={IconMic}/>} variant="default">
                     Gravar Reunião
                 </Button>
                 <Button 
+                size="compact-xs"
                 onClick={() => navigate('/gravacoes')}
                 className={classes.btnPrimary} leftSection={<img src={IconFolder}/>} variant="default">
                     Arquivo externo

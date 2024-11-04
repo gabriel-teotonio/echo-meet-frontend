@@ -18,6 +18,39 @@ async function initDB() {
   });
   return db;
 }
+async function requestMicrophonePermission() {
+  try {
+    // Verifica o status da permissão de microfone
+    const permissionStatus = await navigator.permissions.query({ name: 'microphone' as PermissionName });    // Checa se a permissão já foi concedida
+    if (permissionStatus.state === 'granted') {
+      return true;
+    } else if (permissionStatus.state === 'prompt') {
+      // Caso ainda não tenha solicitado a permissão, solicita agora
+      return await getMicrophoneAccess();
+    } else {
+      // Caso a permissão tenha sido negada
+      alert("Permissão para o microfone foi negada. Habilite-a nas configurações do navegador.");
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao verificar a permissão do microfone:", error);
+    return false;
+  }
+}
+
+async function getMicrophoneAccess() {
+  try {
+    // Solicita o uso do microfone ao usuário
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(track => track.stop()); // Para imediatamente o uso do microfone
+    return true;
+  } catch (error) {
+    console.error("Erro ao acessar o microfone:", error);
+    alert("Não foi possível acessar o microfone. Verifique as permissões.");
+    return false;
+  }
+}
+
 
 // Função para salvar áudio no IndexedDB
 async function saveAudio(blob: Blob) {
@@ -94,25 +127,32 @@ const AudioRecorder: React.FC = () => {
 
   // Inicia a gravação
   const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mediaRecorder = new MediaRecorder(stream);
-    mediaRecorderRef.current = mediaRecorder;
-
-    mediaRecorder.ondataavailable = (event) => {
-      audioChunksRef.current.push(event.data);
-    };
-
-    mediaRecorder.onstop = async () => {
-      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/mp3' });
-      audioChunksRef.current = [];
-      await saveAudio(audioBlob);
-      const audios = await getSavedAudios();
-      setSavedAudios(audios);
-    };
-
-    mediaRecorder.start();
-    setIsRecording(true);
-    startTimer();
+    const permissionGranted = await requestMicrophonePermission();
+    if (!permissionGranted) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+  
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
+  
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/mp3' });
+        audioChunksRef.current = [];
+        await saveAudio(audioBlob);
+        const audios = await getSavedAudios();
+        setSavedAudios(audios);
+      };
+  
+      mediaRecorder.start();
+      setIsRecording(true);
+      startTimer();
+    } catch (error) {
+      console.error("Erro ao acessar o microfone:", error);
+      alert("Não foi possível acessar o microfone. Verifique as permissões.");
+    }
   };
 
   // Para a gravação
