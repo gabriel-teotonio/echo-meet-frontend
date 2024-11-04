@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Flex, Text, Modal, Button, Card, TextInput, Select, Divider } from "@mantine/core";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import Markdown from "react-markdown";
@@ -41,9 +41,8 @@ export function GrupoDetail() {
     const [selectedValueType, setSelectedValueType] = useState<string>("numeric");
     const [dashboardHtml, setDashboardHtml] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [dashboardOptions, setDashboardOptions] = useState<IDashboardOption | null>(null);
-    const [dashMetricsHtml, setDashMetricsHtml] = useState<string | null>(null);
 
+    const navigate = useNavigate();
 
     const getSummaries = async () => {
         try {
@@ -171,8 +170,12 @@ export function GrupoDetail() {
 
     return (
         <>
+         <Flex py={'md'}>
+        <Button variant="light" onClick={() => navigate(-1)}>Voltar</Button>
+        </Flex>
             <Text c="gray.3">Detalhes do grupo</Text>
             <TextInput
+            bg={'red'}
                 value={groupName}
                 onChange={(e) => setGroupName(e.currentTarget.value)}
                 placeholder="Atualize o nome do grupo"

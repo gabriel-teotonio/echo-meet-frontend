@@ -117,7 +117,7 @@ export function Grupos() {
   const handleDeleteGroup = async (id: number) => {
     if (confirm("Excluir Grupo?")) {
       try {
-        await axios.delete(`http://45.169.29.120:8000/groups/${id}`, {
+        await axios.delete(`http://45.169.29.120:8000/grupos/${id}`, {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
@@ -132,6 +132,9 @@ export function Grupos() {
 
   return (
     <>
+    <Flex py={'md'}>
+    <Button variant="light" onClick={() => navigate(-1)}>Voltar</Button>
+    </Flex>
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}

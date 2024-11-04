@@ -4,6 +4,7 @@ import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { useDisclosure } from "@mantine/hooks";
 import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface IAudioFile {
   name: string;
@@ -25,6 +26,7 @@ export default function GravacoesDashboard() {
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null); // Grupo selecionado
   const [modalGroupOpened, { open: openGroupModal, close: closeGroupModal }] = useDisclosure(false);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Função para buscar grupos
   const fetchGroups = async () => {
@@ -60,7 +62,7 @@ export default function GravacoesDashboard() {
   };
 
   // Função para enviar o áudio e gerar o resumo
-  const aoGerarResumo = (audioFile: IAudioFile) => {
+  const aoGerarResumo = () => {
     openGroupModal(); // Abre o modal de seleção de grupo
   };
 
@@ -82,9 +84,11 @@ export default function GravacoesDashboard() {
           Authorization: `Bearer ${user?.access_token}`,
         },
       });
+      console.log(response.data);
       if(response.status === 200) {
-        setFeedbackText("Sua reunião foi transcrita com sucesso! Confira os detalhes.");
+        setFeedbackText("Sua reunião foi transcrita com sucesso! Confira os detalhes no grupo selecionado");
         setResumos((prev) => [...prev, response.data.transcription]);
+        navigate('/grupos/' + selectedGroup);
       } else {
         setFeedbackText('Erro ao transcrever o áudio, tente novamente!');
       }
@@ -98,6 +102,9 @@ export default function GravacoesDashboard() {
 
   return (
     <div style={{ padding: "20px" }}>
+       <Flex py={'md'}>
+    <Button variant="light" onClick={() => navigate(-1)}>Voltar</Button>
+    </Flex>
       <Modal
         opened={opened} 
         onClose={close} 
@@ -161,7 +168,7 @@ export default function GravacoesDashboard() {
                <Button 
                  variant="outline" 
                  color="#5A3FE5" 
-                 onClick={() => aoGerarResumo(audio)} // Passando o arquivo de áudio
+                 onClick={() => aoGerarResumo()} // Passando o arquivo de áudio
                >
                  Gerar Resumo
                </Button>

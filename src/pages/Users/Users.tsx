@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { IconEdit, IconMail, IconPassword, IconTrash, IconUser } from '@tabler/icons-react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface IUser {
   id: number;
@@ -20,6 +21,7 @@ export function Users() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [newUser, setNewUser] = useState<IUser>({id: 0, email: '', name: '', user_type: '', password: '' });
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Função para carregar os usuários ao montar o componente
   useEffect(() => {
@@ -95,6 +97,9 @@ export function Users() {
 
   return (
     <>
+     <Flex py={'md'}>
+    <Button variant="light" onClick={() => navigate(-1)}>Voltar</Button>
+    </Flex>
       {/* Modal para criar/editar usuários */}
       <Modal opened={opened} onClose={close} title={isEditMode ? 'Editar Usuário' : 'Criar novo Usuário'} centered>
         <Flex gap={'sm'} direction={'column'}>
