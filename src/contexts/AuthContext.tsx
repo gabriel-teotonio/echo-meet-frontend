@@ -47,7 +47,7 @@ export const AuthProvider= ({ children }: IChildren) => {
       formData.append('username', username);
       formData.append('password', password);
 
-      const response = await axios.post<User>('https://app.echomeets.online/login', formData, {
+      const response = await axios.post<User>('http://45.169.29.120:8000/login', formData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
