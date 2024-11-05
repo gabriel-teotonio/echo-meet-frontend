@@ -1,12 +1,12 @@
-import axios from "axios";
 import { useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import api from "../../utils/api";
 
 function SummaryDetail() {
     const { user } = useAuth();
 
     const fetchSummary = async () => {
-        const res = await axios.get('http://45.169.29.120:8000/resumo/2', {
+        const res = await api.get('/resumo/2', {
             headers: {
                 Authorization: `Bearer ${user?.access_token}`, // Inclui o token no header da requisição
               },

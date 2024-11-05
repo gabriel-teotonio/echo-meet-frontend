@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, Flex, Modal, Text, Select } from "@mantine/core";
-import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import { useDisclosure } from "@mantine/hooks";
-import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import api from "../../utils/api";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface IAudioFile {
   name: string;
@@ -25,13 +25,13 @@ export default function GravacoesDashboard() {
   const [grupos, setGrupos] = useState<IGrupo[]>([]); // Armazena grupos
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null); // Grupo selecionado
   const [modalGroupOpened, { open: openGroupModal, close: closeGroupModal }] = useDisclosure(false);
-  const { user } = useAuth();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Função para buscar grupos
   const fetchGroups = async () => {
     try {
-      const response = await axios.get('http://45.169.29.120:8000/groups', {
+      const response = await api.get('/groups', {
         headers: {
           Authorization: `Bearer ${user?.access_token}`,
         },
@@ -78,7 +78,7 @@ export default function GravacoesDashboard() {
     formData.append("audio_file", audioFile.file); // Usando a chave 'audio_file'
     
     try {
-      const response = await axios.post(`http://45.169.29.120:8000/transcricao-resumo/${selectedGroup}`, formData, {
+      const response = await api.post(`/transcricao-resumo/${selectedGroup}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${user?.access_token}`,

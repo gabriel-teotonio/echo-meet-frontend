@@ -5,6 +5,7 @@ import { IconDownload, IconMicrophone, IconPlayerPlay, IconTrash } from '@tabler
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import gifRobot from '../../assets/robot.gif';
+import api from '../../utils/api';
 
 const DB_NAME = 'AudioDB';
 const STORE_NAME = 'Recordings';
@@ -98,7 +99,7 @@ const AudioRecorder: React.FC = () => {
   // Função para buscar grupos
   const fetchGroups = async () => {
     try {
-      const response = await axios.get('http://45.169.29.120:8000/groups', {
+      const response = await api.get('/groups', {
         headers: {
           Authorization: `Bearer ${user?.access_token}`,
         },
@@ -202,7 +203,11 @@ const AudioRecorder: React.FC = () => {
     formData.append("audio_file", audioBlob);
 
     try {
-      const response = await axios.post(`http://45.169.29.120:8000/transcricao-resumo/${selectedGroup}`, formData);
+      const response = await api.post(`/transcricao-resumo/${selectedGroup}`, formData, {
+        headers: {
+          Authorization: `Bearer ${user?.access_token}`,
+        },
+      });
       if (response.status === 200) {
         setFeedbackText("Resumo gerado com sucesso!");
       } else {

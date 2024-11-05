@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Flex, Text, Modal, Button, Card, TextInput, Select, Divider } from "@mantine/core";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import Markdown from "react-markdown";
 import classes from './GruposDetail.module.css';
 import { IUser } from "../Grupos/Grupos";
+import api from "../../utils/api";
 
 export interface IDashboardOption {
     numeric: string[];
@@ -46,7 +46,7 @@ export function GrupoDetail() {
 
     const getSummaries = async () => {
         try {
-            const res = await axios.get(`http://45.169.29.120:8000/grupos/${id}/reunioes`, {
+            const res = await api.get(`grupos/${id}/reunioes`, {
                 headers: { Authorization: `Bearer ${user?.access_token}` },
             });
             setReunioes(res.data);
@@ -58,7 +58,7 @@ export function GrupoDetail() {
 
     const getEmails = async () => {
         try {
-            const res = await axios.get(`http://45.169.29.120:8000/grupos/${id}/emails`, {
+            const res = await api.get(`/grupos/${id}/emails`, {
                 headers: { Authorization: `Bearer ${user?.access_token}` },
             });
             setEmails(res.data);
@@ -70,7 +70,7 @@ export function GrupoDetail() {
     useEffect(() => {
         const fetchEmails = async () => {
             try {
-                const response = await axios.get<IUser[]>("http://45.169.29.120:8000/users", {
+                const response = await api.get<IUser[]>("/users", {
                     headers: { Authorization: `Bearer ${user?.access_token}` },
                 });
                 const emailList = response.data.map((user) => user.email);
@@ -85,7 +85,7 @@ export function GrupoDetail() {
     const addEmailToGroup = async () => {
         if (newEmail) {
             try {
-                await axios.post(`http://45.169.29.120:8000/grupos/${id}/emails`, { email: newEmail }, {
+                await api.post(`/grupos/${id}/emails`, { email: newEmail }, {
                     headers: { Authorization: `Bearer ${user?.access_token}` },
                 });
                 alert("E-mail adicionado com sucesso!");
@@ -101,7 +101,7 @@ export function GrupoDetail() {
 
     const updateGroupName = async () => {
         try {
-            await axios.put(`http://45.169.29.120:8000/grupos-update-name/${id}`, { name: groupName }, {
+            await api.put(`/grupos-update-name/${id}`, { name: groupName }, {
                 headers: { Authorization: `Bearer ${user?.access_token}` },
             });
             alert("Nome do grupo atualizado com sucesso!");
@@ -144,7 +144,7 @@ export function GrupoDetail() {
     const fetchDashboard = async () => {
         if (selectedReuniao) {
             try {
-                const response = await axios.get(`http://45.169.29.120:8000/generate-dashboard/${selectedReuniao.summary_id}/${selectedValueType}`);
+                const response = await api.get(`/generate-dashboard/${selectedReuniao.summary_id}/${selectedValueType}`);
                 setDashboardHtml(response.data);
                 setError(null); 
             } catch (error) {

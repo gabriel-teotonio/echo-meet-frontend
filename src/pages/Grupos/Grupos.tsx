@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { MultiSelect, Button, Modal, TextInput, Flex, Text, Group, ActionIcon, Box } from "@mantine/core";
-import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import classes from "./Grupos.module.css";
 import { useNavigate } from "react-router-dom";
+import api from "../../utils/api";
 
 export interface IUser {
   email: string;
@@ -35,9 +35,9 @@ export function Grupos() {
   useEffect(() => {
     const fetchEmails = async () => {
       try {
-        const response = await axios.get<IUser[]>("http://45.169.29.120:8000/users", {
+        const response = await api.get<IUser[]>("/users", {
           headers: {
-            Authorization: `Bearer ${user?.access_token}`, // Inclui o token no header da requisição
+            Authorization: `Bearer ${user?.access_token}`,
           },
         });
         const emailList = response.data.map((user) => user.email); // Extrai apenas os emails
@@ -54,7 +54,7 @@ export function Grupos() {
 
     const fetchGroups = async () => {
       try {
-        const response = await axios.get("http://45.169.29.120:8000/groups", {
+        const response = await api.get("/groups", {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
@@ -83,7 +83,7 @@ export function Grupos() {
     try {
       if (isEditMode && selectedGrupo) {
         // Atualizando grupo existente
-        await axios.put(`http://45.169.29.120:8000/groups/${selectedGrupo.id}`, groupData, {
+        await api.put(`/groups/${selectedGrupo.id}`, groupData,{
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
@@ -91,7 +91,7 @@ export function Grupos() {
         console.log("Grupo atualizado com sucesso!");
       } else {
         // Criando novo grupo
-        await axios.post("http://45.169.29.120:8000/groups", groupData, {
+        await api.post("/groups", groupData, {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
@@ -117,7 +117,7 @@ export function Grupos() {
   const handleDeleteGroup = async (id: number) => {
     if (confirm("Excluir Grupo?")) {
       try {
-        await axios.delete(`http://45.169.29.120:8000/grupos/${id}`, {
+        await api.delete(`/grupos/${id}`, {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },

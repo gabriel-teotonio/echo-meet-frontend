@@ -2,9 +2,9 @@ import { ActionIcon, Button, Flex, Group, Modal, Select, Table, TextInput, Title
 import { useDisclosure } from '@mantine/hooks';
 import { useState, useEffect } from 'react';
 import { IconEdit, IconMail, IconPassword, IconTrash, IconUser } from '@tabler/icons-react';
-import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import api from '../../utils/api';
 
 interface IUser {
   id: number;
@@ -27,10 +27,10 @@ export function Users() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get<IUser[]>('http://45.169.29.120:8000/users', {
+        const response = await api.get<IUser[]>('/users', {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
-          },
+          },  
         });
         console.log(response.data)
         setUsers(response.data);
@@ -47,7 +47,7 @@ export function Users() {
     try {
       if (isEditMode && selectedUser) {
         // Atualizar o usuário existente
-        await axios.put(`http://45.169.29.120:8000/users/${selectedUser.id}`, newUser, {
+        await api.put(`/users/${selectedUser.id}`, newUser,{
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
@@ -57,7 +57,7 @@ export function Users() {
         );
       } else {
         // Criar novo usuário
-        await axios.post('http://45.169.29.120:8000/users', newUser, {
+        await api.post('/users', newUser, {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
@@ -83,7 +83,7 @@ export function Users() {
   const handleDeleteUser = async (userId: number) => {
     if (confirm('Excluir Usuário?')) {
       try {
-        await axios.delete(`http://45.169.29.120:8000/users/${userId}`, {
+        await api.delete(`/users/${userId}`, {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
