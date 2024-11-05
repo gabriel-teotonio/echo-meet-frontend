@@ -27,6 +27,7 @@ export function Grupos() {
   const [opened, setOpened] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false); 
   const [selectedGrupo, setSelectedGrupo] = useState<IGroup | null>(null); 
+  const [isLoading, setIsLoading] = useState(false)
 
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -66,7 +67,7 @@ export function Grupos() {
       }
     };
     fetchGroups();
-  }, [user?.access_token]);
+  }, [user?.access_token, isLoading]);
 
   // Função chamada ao criar ou editar o grupo
   const handleSaveGroup = async () => {
@@ -79,8 +80,8 @@ export function Grupos() {
       name: groupName,
       emails: selectedEmails.map((email) => ({ email })),
     };
-
     try {
+      setIsLoading(true)
       if (isEditMode && selectedGrupo) {
         // Atualizando grupo existente
         await api.put(`/groups/${selectedGrupo.id}`, groupData,{
@@ -102,6 +103,8 @@ export function Grupos() {
       setOpened(false);
     } catch (error) {
       console.error("Erro ao salvar grupo:", error);
+    }finally {
+      setIsLoading(false)
     }
   };
 
@@ -165,7 +168,7 @@ export function Grupos() {
             </Box>
         </Flex>
         <Button fullWidth mt={"md"} onClick={handleSaveGroup}>
-          {isEditMode ? "Salvar Alterações" : "Criar Grupo"}
+          {isLoading ? isEditMode ? "Salvar Alterações" : "Criar Grupo" : 'criando grupo'}
         </Button>
       </Modal>
 

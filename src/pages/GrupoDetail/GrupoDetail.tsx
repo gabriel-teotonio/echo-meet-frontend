@@ -185,7 +185,7 @@ export function GrupoDetail() {
             <Flex justify={'space-between'} h={'100%'}>
                 <Flex gap={'sm'} mt={"lg"} direction={'column'}>
                     <Text fw={'bold'}>Resumos de reuniões</Text>
-                    {reunioes.map((reuniao) => (
+                    {reunioes.length >= 0 ? reunioes.map((reuniao) => (
                         <Card
                             key={reuniao.summary_id}
                             style={{ border: '1px solid #55506E' }}
@@ -197,7 +197,8 @@ export function GrupoDetail() {
                                 Detalhes da reunião
                             </Button>
                         </Card>
-                    ))}
+                    )): <p>Nenhuma reunião encontrada</p>
+                }
                 </Flex>
 
                 <Flex 
@@ -218,7 +219,7 @@ export function GrupoDetail() {
                             </Flex>
                         ))
                     ) : (
-                        <Text color="dimmed">Nenhum e-mail encontrado para este grupo.</Text>
+                        <Text c="dimmed">Nenhum e-mail encontrado para este grupo.</Text>
                     )}
 
                     <Select
