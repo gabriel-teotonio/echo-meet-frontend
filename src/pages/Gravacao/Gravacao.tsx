@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button, Flex, Text, List, Card, Modal, Select, ActionIcon } from '@mantine/core';
 import { openDB } from 'idb';
 import { IconDownload, IconMicrophone, IconPlayerPlay, IconTrash } from '@tabler/icons-react';
-import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import gifRobot from '../../assets/robot.gif';
 import api from '../../utils/api';

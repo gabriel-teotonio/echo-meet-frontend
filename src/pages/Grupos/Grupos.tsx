@@ -54,7 +54,7 @@ export function Grupos() {
 
     const fetchGroups = async () => {
       try {
-        const response = await api.get("/groups", {
+        const response = await api.get("/groupsonly", {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
