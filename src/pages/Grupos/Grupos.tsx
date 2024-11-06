@@ -4,7 +4,6 @@ import { useAuth } from "../../contexts/AuthContext";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import classes from "./Grupos.module.css";
 import { useNavigate } from "react-router-dom";
-import api from "../../utils/api";
 import axios from "axios";
 
 export interface IUser {
@@ -37,7 +36,7 @@ export function Grupos() {
   useEffect(() => {
     const fetchEmails = async () => {
       try {
-        const response = await api.get<IUser[]>("/users", {
+        const response = await axios.get<IUser[]>("https://app.echomeets.online/users", {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },

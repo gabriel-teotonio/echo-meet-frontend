@@ -4,7 +4,7 @@ import { openDB } from 'idb';
 import { IconDownload, IconMicrophone, IconPlayerPlay, IconTrash } from '@tabler/icons-react';
 import { useAuth } from '../../contexts/AuthContext';
 import gifRobot from '../../assets/robot.gif';
-import api from '../../utils/api';
+import axios from 'axios';
 
 const DB_NAME = 'AudioDB';
 const STORE_NAME = 'Recordings';
@@ -98,7 +98,7 @@ const AudioRecorder: React.FC = () => {
   // Função para buscar grupos
   const fetchGroups = async () => {
     try {
-      const response = await api.get('/groups', {
+      const response = await axios.get('https://app.echomeets.online/groups', {
         headers: {
           Authorization: `Bearer ${user?.access_token}`,
         },
@@ -202,7 +202,7 @@ const AudioRecorder: React.FC = () => {
     formData.append("audio_file", audioBlob);
 
     try {
-      const response = await api.post(`/transcricao-resumo/${selectedGroup}`, formData, {
+      const response = await axios.post(`https://app.echomeets.online/transcricao-resumo/${selectedGroup}`, formData, {
         headers: {
           Authorization: `Bearer ${user?.access_token}`,
         },

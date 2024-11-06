@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { IconEdit, IconMail, IconPassword, IconTrash, IconUser } from '@tabler/icons-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import api from '../../utils/api';
+import axios from 'axios';
 
 interface IUser {
   id: number;
@@ -27,7 +27,7 @@ export function Users() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get<IUser[]>('/users', {
+        const response = await axios.get<IUser[]>('https://app.echomeets.online/users', {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },  
@@ -47,7 +47,7 @@ export function Users() {
     try {
       if (isEditMode && selectedUser) {
         // Atualizar o usuário existente
-        await api.put(`/users/${selectedUser.id}`, newUser,{
+        await axios.put(`https://app.echomeets.online/users/${selectedUser.id}`, newUser,{
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
@@ -57,7 +57,7 @@ export function Users() {
         );
       } else {
         // Criar novo usuário
-        await api.post('/users', newUser, {
+        await axios.post('https://app.echomeets.online/users', newUser, {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
@@ -83,7 +83,7 @@ export function Users() {
   const handleDeleteUser = async (userId: number) => {
     if (confirm('Excluir Usuário?')) {
       try {
-        await api.delete(`/users/${userId}`, {
+        await axios.delete(`https://app.echomeets.online/users/${userId}`, {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
