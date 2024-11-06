@@ -5,6 +5,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 import api from "../../utils/api";
 import { useAuth } from "../../contexts/AuthContext";
+import axios from "axios";
 
 interface IAudioFile {
   name: string;
@@ -31,11 +32,13 @@ export default function GravacoesDashboard() {
   // Função para buscar grupos
   const fetchGroups = async () => {
     try {
-      const response = await api.get('/groups', {
+      const response = await axios.get('https://app.echomeets.online/groupsonly/', {
         headers: {
           Authorization: `Bearer ${user?.access_token}`,
         },
+        withCredentials: true
       });
+      // console.log(response.data)
       setGrupos(response.data);
     } catch (error) {
       console.error("Erro ao buscar grupos:", error);
@@ -86,9 +89,12 @@ export default function GravacoesDashboard() {
       });
       console.log(response.data);
       if(response.status === 200) {
+        const group = grupos.find(grupo => grupo.name === selectedGroup);
         setFeedbackText("Sua reunião foi transcrita com sucesso! Confira os detalhes no grupo selecionado");
         setResumos((prev) => [...prev, response.data.transcription]);
-        navigate('/grupos/' + selectedGroup);
+        setTimeout(() => {
+          navigate('/grupos/' + group?.id);
+        }, 1000);
       } else {
         setFeedbackText('Erro ao transcrever o áudio, tente novamente!');
       }
@@ -121,7 +127,7 @@ export default function GravacoesDashboard() {
         <Select
           label="Escolha um grupo"
           placeholder="Selecione um grupo"
-          data={grupos.map(grupo => ({ value: grupo.name, label: grupo.name }))}
+          data={grupos.map((grupo) => ({ value: grupo.name, label: grupo.name }))}
           onChange={setSelectedGroup}
         />
         <Button 

@@ -5,6 +5,7 @@ import { IconEdit, IconTrash } from "@tabler/icons-react";
 import classes from "./Grupos.module.css";
 import { useNavigate } from "react-router-dom";
 import api from "../../utils/api";
+import axios from "axios";
 
 export interface IUser {
   email: string;
@@ -55,12 +56,11 @@ export function Grupos() {
 
     const fetchGroups = async () => {
       try {
-        const response = await api.get("/groups", {
+        const response = await axios.get("https://app.echomeets.online/groupsonly/", {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
         });
-        console.log(response.data)
         setGroups(response.data);
       } catch (error) {
         console.error("Erro ao buscar grupos:", error);
@@ -84,7 +84,7 @@ export function Grupos() {
       setIsLoading(true)
       if (isEditMode && selectedGrupo) {
         // Atualizando grupo existente
-        await api.put(`/groups/${selectedGrupo.id}`, groupData,{
+        await axios.put(`https://app.echomeets.online/groups/${selectedGrupo.id}`, groupData,{
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
@@ -92,10 +92,11 @@ export function Grupos() {
         console.log("Grupo atualizado com sucesso!");
       } else {
         // Criando novo grupo
-        await api.post("/groups", groupData, {
+        await axios.post("https://app.echomeets.online/groups/", groupData, {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
+          withCredentials: true
         });
         console.log("Grupo criado com sucesso!");
       }
@@ -120,7 +121,7 @@ export function Grupos() {
   const handleDeleteGroup = async (id: number) => {
     if (confirm("Excluir Grupo?")) {
       try {
-        await api.delete(`/grupos/${id}`, {
+        await axios.delete(`https://app.echomeets.online/groups/${id}`, { 
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
