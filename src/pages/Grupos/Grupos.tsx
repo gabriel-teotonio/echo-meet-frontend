@@ -95,7 +95,6 @@ export function Grupos() {
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
-          withCredentials: true
         });
         console.log("Grupo criado com sucesso!");
       }

@@ -36,7 +36,6 @@ export default function GravacoesDashboard() {
         headers: {
           Authorization: `Bearer ${user?.access_token}`,
         },
-        withCredentials: true
       });
       // console.log(response.data)
       setGrupos(response.data);
