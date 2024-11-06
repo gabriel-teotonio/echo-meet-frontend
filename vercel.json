@@ -1,20 +1,8 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "src/index.js",
-        "use": "@vercel/node"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/grupos/(.*)",
-        "dest": "/grupos/$1"
-      },
-      {
-        "src": "/outra-rota/(.*)",
-        "dest": "/outra-rota/$1"
-      }
-    ]
-  }
-  
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
