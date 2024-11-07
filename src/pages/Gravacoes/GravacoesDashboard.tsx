@@ -3,7 +3,6 @@ import { Button, Card, Flex, Modal, Text, Select } from "@mantine/core";
 import ReactMarkdown from 'react-markdown';
 import { useDisclosure } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
-import api from "../../utils/api";
 import { useAuth } from "../../contexts/AuthContext";
 import axios from "axios";
 
@@ -80,7 +79,7 @@ export default function GravacoesDashboard() {
     formData.append("audio_file", audioFile.file); // Usando a chave 'audio_file'
     
     try {
-      const response = await api.post(`/transcricao-resumo/${selectedGroup}`, formData, {
+      const response = await axios.post(`https://app.echomeets.online/transcricao-resumo/${selectedGroup}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${user?.access_token}`,
