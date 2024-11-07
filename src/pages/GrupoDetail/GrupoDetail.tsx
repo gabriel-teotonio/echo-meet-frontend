@@ -144,7 +144,9 @@ export function GrupoDetail() {
     const fetchDashboard = async () => {
         if (selectedReuniao) {
             try {
-                const response = await axios.get(`https://app.echomeets.online/generate-dashboard/${selectedReuniao.summary_id}/${selectedValueType}`);
+                const response = await axios.get(`https://app.echomeets.online/generate-dashboard/${selectedReuniao.summary_id}/${selectedValueType}`, {
+                    headers: { Authorization: `Bearer ${user?.access_token}` },
+                });
                 setDashboardHtml(response.data);
                 setError(null); 
             } catch (error) {
