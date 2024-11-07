@@ -98,7 +98,7 @@ const AudioRecorder: React.FC = () => {
   // Função para buscar grupos
   const fetchGroups = async () => {
     try {
-      const response = await axios.get('https://app.echomeets.online/groups', {
+      const response = await axios.get('https://app.echomeets.online/groupsonly/', {
         headers: {
           Authorization: `Bearer ${user?.access_token}`,
         },

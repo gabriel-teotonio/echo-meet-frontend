@@ -119,7 +119,7 @@ export function Grupos() {
   const handleDeleteGroup = async (id: number) => {
     if (confirm("Excluir Grupo?")) {
       try {
-        await axios.delete(`https://app.echomeets.online/groups/${id}`, { 
+        await axios.delete(`https://app.echomeets.online/grupos/${id}`, { 
           headers: {
             Authorization: `Bearer ${user?.access_token}`,
           },
