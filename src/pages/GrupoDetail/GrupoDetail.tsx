@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Flex, Text, Modal, Button, Card, TextInput, Select, Divider } from "@mantine/core";
+import { Flex, Text, Modal, Button, Card, Select, Divider } from "@mantine/core";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import Markdown from "react-markdown";
@@ -29,7 +29,6 @@ export function GrupoDetail() {
     const { id } = useParams();
     const { user } = useAuth();
 
-    const [groupName, setGroupName] = useState<string>("");
     const [newEmail, setNewEmail] = useState<string>("");
     const [userEmails, setUserEmails] = useState<string[]>([]);
     const [reunioes, setReunioes] = useState<IReuniao[]>([]);
@@ -96,17 +95,6 @@ export function GrupoDetail() {
             }
         } else {
             alert("Por favor, selecione um e-mail válido.");
-        }
-    };
-
-    const updateGroupName = async () => {
-        try {
-            await axios.put(`https://app.echomeets.online/grupos-update-name/${id}`, { name: groupName }, {
-                headers: { Authorization: `Bearer ${user?.access_token}` },
-            });
-            alert("Nome do grupo atualizado com sucesso!");
-        } catch (error) {
-            console.error("Erro ao atualizar o nome do grupo:", error);
         }
     };
 

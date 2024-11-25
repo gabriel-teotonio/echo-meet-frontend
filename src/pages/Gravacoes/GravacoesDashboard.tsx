@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import classes from "./GravacoesDash.module.css";
 import axios from "axios";
-import { Icon123, IconFileUpload } from "@tabler/icons-react";
+import { IconFileUpload } from "@tabler/icons-react";
 
 interface IAudioFile {
   name: string;
@@ -22,7 +22,7 @@ export interface IGrupo {
 export default function GravacoesDashboard() {
   const [audioFiles, setAudioFiles] = useState<IAudioFile[]>([]);
   const [resumos, setResumos] = useState<string[]>([]); // Para armazenar os resumos gerados
-  const [feedbackText, setFeedbackText] = useState('Estamos gerando o resumo da reunião...');
+  const [feedbackText, setFeedbackText] = useState('Estamos gerando o resumo da reunião... após isso você será redirecionado para o grupo selecionado.');
   const [opened, { open, close }] = useDisclosure(false);
   const [grupos, setGrupos] = useState<IGrupo[]>([]); // Armazena grupos
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null); // Grupo selecionado
@@ -117,6 +117,7 @@ export default function GravacoesDashboard() {
         title="Resumo de reunião"
       >
         <Text>{feedbackText}</Text>
+        <Button onClick={close}>OK</Button>
       </Modal>
 
       <Modal

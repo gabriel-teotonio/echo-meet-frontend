@@ -260,7 +260,7 @@ const AudioRecorder: React.FC = () => {
       <Text size="lg" mt="md">Áudios Salvos</Text>
       {savedAudios.length > 0 ? (
         <List>
-          {savedAudios.map((recording, index) => (
+          {savedAudios.map((recording) => (
             <Card
             mt={'md'}
               key={recording.id}
