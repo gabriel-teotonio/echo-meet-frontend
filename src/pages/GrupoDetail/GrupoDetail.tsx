@@ -176,13 +176,13 @@ export function GrupoDetail() {
         <Button variant="light" onClick={() => navigate(-1)}>Voltar</Button>
         </Flex>
             <Text c="gray.3">Detalhes do grupo</Text>
-            <TextInput
+            {/* <TextInput
             bg={'red'}
                 value={groupName}
                 onChange={(e) => setGroupName(e.currentTarget.value)}
                 placeholder="Atualize o nome do grupo"
             />
-            <Button onClick={updateGroupName} mt="sm" color="blue">Atualizar Nome</Button>
+            <Button onClick={updateGroupName} mt="sm" color="blue">Atualizar Nome</Button> */}
 
             <Flex justify={'space-between'} h={'100%'}>
                 <Flex gap={'sm'} mt={"lg"} direction={'column'}>

@@ -3,8 +3,9 @@ import { Button, Flex, Text, List, Card, Modal, Select, ActionIcon } from '@mant
 import { openDB } from 'idb';
 import { IconDownload, IconMicrophone, IconPlayerPlay, IconTrash } from '@tabler/icons-react';
 import { useAuth } from '../../contexts/AuthContext';
-import gifRobot from '../../assets/robot.gif';
+import gifRobot from '../../assets/loading-robot.gif';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const DB_NAME = 'AudioDB';
 const STORE_NAME = 'Recordings';
@@ -53,11 +54,11 @@ async function getMicrophoneAccess() {
 
 
 // Função para salvar áudio no IndexedDB
-async function saveAudio(blob: Blob) {
+async function saveAudio(blob: Blob, nameFile?: string) {
   const db = await initDB();
   const tx = db.transaction(STORE_NAME, 'readwrite');
   const store = tx.objectStore(STORE_NAME);
-  await store.add({ audio: blob, date: new Date() });
+  await store.add({ audio: blob, date: new Date(), name: nameFile });
   await tx.done;
 }
 
@@ -73,7 +74,7 @@ async function getSavedAudios() {
 // Componente principal de gravação de áudio
 const AudioRecorder: React.FC = () => {
   const [isRecording, setIsRecording] = useState(false);
-  const [savedAudios, setSavedAudios] = useState<{ id: number; audio: Blob; date: Date }[]>([]);
+  const [savedAudios, setSavedAudios] = useState<{ id: number; audio: Blob; date: Date, name: string }[]>([]);
   const [recordingTime, setRecordingTime] = useState(0);
   const [grupos, setGrupos] = useState<{ id: string; name: string }[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
@@ -82,6 +83,8 @@ const AudioRecorder: React.FC = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<number | null>(null);
+
+  const navigate = useNavigate();
 
   const {user} = useAuth();
 
@@ -141,7 +144,12 @@ const AudioRecorder: React.FC = () => {
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/mp3' });
         audioChunksRef.current = [];
-        await saveAudio(audioBlob);
+        const nameFile = prompt('Digite um nome para o arquivo:');
+        if(nameFile){
+          await saveAudio(audioBlob, nameFile);
+        }else{
+          await saveAudio(audioBlob);
+        }
         const audios = await getSavedAudios();
         setSavedAudios(audios);
       };
@@ -201,6 +209,8 @@ const AudioRecorder: React.FC = () => {
     const formData = new FormData();
     formData.append("audio_file", audioBlob);
 
+    const group = grupos.find(grupo => grupo.name === selectedGroup);
+
     try {
       const response = await axios.post(`https://app.echomeets.online/transcricao-resumo/${selectedGroup}`, formData, {
         headers: {
@@ -209,6 +219,7 @@ const AudioRecorder: React.FC = () => {
       });
       if (response.status === 200) {
         setFeedbackText("Resumo gerado com sucesso!");
+        navigate('/grupos/' + group?.id);
       } else {
         setFeedbackText("Erro ao gerar o resumo.");
       }
@@ -228,13 +239,23 @@ const AudioRecorder: React.FC = () => {
   };
 
   return (
-    <Flex direction="column" maw={'600px'} gap="sm">
-      <Text size="xl">Gravador de Áudio</Text>
-      <Button leftSection={<IconMicrophone/>} onClick={isRecording ? stopRecording : startRecording} color={isRecording ? 'red' : 'blue'}>
-        {isRecording ? 'Parar Gravação' : 'Iniciar Gravação'}
-      </Button>
+    <Flex 
+    justify={'center'} direction={'column'} align={'center'}
+    w={'100%'} gap="sm"
+    >
+      <Flex direction={'column'} justify={'center'} align={'center'}>
 
+      <Text fw={500} mb={'md'} size="xl">Gravador de Áudio</Text>
+      <ActionIcon
+      radius={100} w={160} h={160}
+      onClick={isRecording ? stopRecording : startRecording} color={isRecording ? 'red' : 'blue'}
+      >
+        <IconMicrophone size={50} />
+      </ActionIcon>
+      </Flex>
       {isRecording && <Text>Tempo de gravação: {recordingTime}s</Text>}
+
+      <Flex direction={'column'} gap={'md'} justify={'center'} align={'center'}>
 
       <Text size="lg" mt="md">Áudios Salvos</Text>
       {savedAudios.length > 0 ? (
@@ -248,7 +269,7 @@ const AudioRecorder: React.FC = () => {
               style={{ border: '1px solid #55506E', backgroundColor: '#161324' }} 
               radius="md"
             >
-              <Text size="xl" fw={500} c="white">Gravação {index + 1}</Text>
+              <Text size="xl" fw={500} c="white">{recording.name}</Text>
               <Text c="dimmed" size="sm">{recording.date.toLocaleString()}</Text>
               
               <Flex gap={'sm'} justify="flex-end" mt="md">
@@ -271,6 +292,7 @@ const AudioRecorder: React.FC = () => {
       ) : (
         <Text c="dimmed">Nenhum áudio salvo.</Text>
       )}
+      </Flex>
 
       {/* Modal para seleção de grupo */}
       <Modal

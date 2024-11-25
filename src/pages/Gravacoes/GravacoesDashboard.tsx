@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, Flex, Modal, Text, Select } from "@mantine/core";
+import { Button, Card, Flex, Modal, Text, Select, Box } from "@mantine/core";
 import ReactMarkdown from 'react-markdown';
 import { useDisclosure } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import classes from "./GravacoesDash.module.css";
 import axios from "axios";
+import { Icon123, IconFileUpload } from "@tabler/icons-react";
 
 interface IAudioFile {
   name: string;
@@ -12,7 +14,7 @@ interface IAudioFile {
   file: File; // Adicionado para referenciar o arquivo original
 }
 
-interface IGrupo {
+export interface IGrupo {
   id: string;
   name: string;
 }
@@ -142,17 +144,24 @@ export default function GravacoesDashboard() {
       </Modal>
 
       <h1>Uploader de Áudios MP3</h1>
-      
-      <input
-        type="file"
-        accept="audio/mp3"
-        multiple
-        onChange={handleAudioUpload}
-        style={{ marginBottom: "20px" }}
-      />
+      <Box my={24}>
+      <label htmlFor="file" className={classes.custumFileUpload}>
+        <div className={classes.file}>
+          <IconFileUpload size={50} />
+        </div>
+        <div className={classes.text}>
+          <span>upload de áudio</span>
+        </div>
+        <input
+         id="file"
+         accept="audio/mp3"
+         onChange={handleAudioUpload}
+         type="file" />
+      </label>
+      </Box>
       
       {audioFiles.length === 0 ? (
-        <p>Nenhum áudio enviado.</p>
+        <p>Nenhum áudio selecionado.</p>
       ) : (
         <ul>
           {audioFiles.map((audio, index) => (

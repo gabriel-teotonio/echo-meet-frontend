@@ -70,9 +70,11 @@ export function Grupos() {
 
   // Função chamada ao criar ou editar o grupo
   const handleSaveGroup = async () => {
-    if (!groupName || selectedEmails.length === 0) {
-      console.log("Nome do grupo ou lista de emails não preenchidos.");
-      return;
+    if(!isEditMode){
+      if (!groupName || selectedEmails.length === 0) {
+        console.log("Nome do grupo ou lista de emails não preenchidos.");
+        return;
+      }
     }
 
     const groupData = {
@@ -82,13 +84,14 @@ export function Grupos() {
     try {
       setIsLoading(true)
       if (isEditMode && selectedGrupo) {
-        // Atualizando grupo existente
-        await axios.put(`https://app.echomeets.online/groups/${selectedGrupo.id}`, groupData,{
-          headers: {
-            Authorization: `Bearer ${user?.access_token}`,
-          },
+        if(groupData.name.length <= 0) {
+          alert("Por favor, preencha o nome do grupo.")
+        }else{
+          await axios.put(`https://app.echomeets.online/grupos-update-name/${selectedGrupo.id}`, { name: groupData.name }, {
+            headers: { Authorization: `Bearer ${user?.access_token}` },
         });
-        console.log("Grupo atualizado com sucesso!");
+        alert("Nome do grupo atualizado com sucesso!");
+        }
       } else {
         // Criando novo grupo
         await axios.post("https://app.echomeets.online/groups/", groupData, {
@@ -96,7 +99,6 @@ export function Grupos() {
             Authorization: `Bearer ${user?.access_token}`,
           },
         });
-        console.log("Grupo criado com sucesso!");
       }
       // Atualiza a lista de grupos após a ação
       setOpened(false);
@@ -167,13 +169,14 @@ export function Grupos() {
             </Box>
         </Flex>
         <Button fullWidth mt={"md"} onClick={handleSaveGroup}>
-          {isLoading ? isEditMode ? "Salvar Alterações" : "Criar Grupo" : 'criando grupo'}
+          {isEditMode ? "Salvar Alterações" : "Criar Grupo"}
         </Button>
       </Modal>
 
       <Button onClick={() => {
         setOpened(true);
         setIsEditMode(false);
+        setGroupName('');
       }}>Criar novo Grupo</Button>
 
       {groups.map((grupo) => (
